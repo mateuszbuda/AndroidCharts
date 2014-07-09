@@ -27,8 +27,8 @@ A simple Android charts library.
 LineView lineView = (LineView)findViewById(R.id.line_view);
 lineView.setDrawDotLine(false); //optional
 lineView.setShowPopup(LineView.SHOW_POPUPS_MAXMIN_ONLY); //optional
-LineView.setBottomTextList(strList);
-LineView.setDataList(dataLists);
+lineView.setBottomTextList(strList);
+lineView.setDataList(dataLists);
 ```
 
 #### Bar Chart
