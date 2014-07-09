@@ -11,7 +11,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.drawable.NinePatchDrawable;
-import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -124,11 +123,9 @@ public class LineView extends View {
         @Override
         public void run() {
             int i = 0;
-            for (ArrayList<Dot> dots : drawDotLists)
-            {
+            for (ArrayList<Dot> dots : drawDotLists) {
                 i = 0;
-                for (Dot dot : dots)
-                {
+                for (Dot dot : dots) {
                     if (dot.visible < 10) {
                         ++dot.visible;
                         break;
@@ -145,14 +142,23 @@ public class LineView extends View {
     };
 
     private boolean horizontalAnimation = false;
-    public void setHorizontalAnimation(boolean horizontalAnimation)
-    {
-        this.horizontalAnimation = horizontalAnimation;
+
+    public void enableHorizontalAnimation() {
+        horizontalAnimation = true;
     }
+
+    public void disableHorizontalAnimation() {
+        horizontalAnimation = false;
+    }
+
     private boolean interpolation = false;
-    public void setInterpolation(boolean interpolation)
-    {
-        this.interpolation = interpolation;
+
+    public void enableInterpolation() {
+        interpolation = true;
+    }
+
+    public void disableInterpolation() {
+        interpolation = false;
     }
 
     private ArrayList<UnivariateFunction> functions = new ArrayList<UnivariateFunction>();
@@ -325,11 +331,15 @@ public class LineView extends View {
             }
         }
 
+        if (horizontalAnimation) {
+            removeCallbacks(drawer);
+            post(drawer);
+        } else {
+            removeCallbacks(animator);
+            post(animator);
+        }
+
         functions.clear();
-        removeCallbacks(animator);
-        post(animator);
-        removeCallbacks(drawer);
-        post(drawer);
     }
 
     private void refreshTopLineLength(int verticalGridNum) {
@@ -420,7 +430,7 @@ public class LineView extends View {
             for (int k = 0; k < drawDotLists.size(); k++) {
                 bigCirPaint.setColor(Color.parseColor(colorArray[k % 3]));
                 for (Dot dot : drawDotLists.get(k)) {
-                    if (dot.visible < 0)
+                    if (horizontalAnimation && dot.visible < 0)
                         break;
                     canvas.drawCircle(dot.x, dot.y, DOT_OUTER_CIR_RADIUS, bigCirPaint);
                     canvas.drawCircle(dot.x, dot.y, DOT_INNER_CIR_RADIUS, smallCirPaint);
@@ -437,42 +447,45 @@ public class LineView extends View {
         for (int k = 0; k < drawDotLists.size(); k++) {
             linePaint.setColor(Color.parseColor(colorArray[k % 3]));
 
-//	        for(int i=0; i<drawDotLists.get(k).size()-1; i++){
-//	            canvas.drawLine(drawDotLists.get(k).get(i).x,
-//	                    drawDotLists.get(k).get(i).y,
-//	                    drawDotLists.get(k).get(i+1).x,
-//	                    drawDotLists.get(k).get(i+1).y,
-//	                    linePaint);
+            if (!interpolation) {
+                for (int i = 0; i < drawDotLists.get(k).size() - 1; i++) {
+                    canvas.drawLine(drawDotLists.get(k).get(i).x,
+                            drawDotLists.get(k).get(i).y,
+                            drawDotLists.get(k).get(i + 1).x,
+                            drawDotLists.get(k).get(i + 1).y,
+                            linePaint);
+                }
+            } else {
+                double[] x = new double[drawDotLists.get(k).size()];
+                double[] y = new double[drawDotLists.get(k).size()];
 
-            double[] x = new double[drawDotLists.get(k).size()];
-            double[] y = new double[drawDotLists.get(k).size()];
+                for (int i = 0; i < drawDotLists.get(k).size(); i++) {
+                    x[i] = drawDotLists.get(k).get(i).x;
+                    y[i] = drawDotLists.get(k).get(i).y;
+                }
 
-            for (int i = 0; i < drawDotLists.get(k).size(); i++) {
-                x[i] = drawDotLists.get(k).get(i).x;
-                y[i] = drawDotLists.get(k).get(i).y;
-            }
+                if (functions.size() < k + 1) {
+                    UnivariateInterpolator interpolator = new SplineInterpolator();
+                    functions.add(interpolator.interpolate(x, y));
+                }
 
-            if (functions.size() < k + 1 ){
-                UnivariateInterpolator interpolator = new SplineInterpolator();
-                functions.add(interpolator.interpolate(x, y));
-            }
-
-            for (int i = 0; i < drawDotLists.get(k).size() - 1; i++) {
-                if (drawDotLists.get(k).get(i).visible < 0)
-                    break;
-
-                double x1 = drawDotLists.get(k).get(i).x;
-                double x2 = drawDotLists.get(k).get(i + 1).x;
-                double step = (x2 - x1) / 10;
-                for (int s = 0; s < 10; s++) {
-                    if (drawDotLists.get(k).get(i).visible < s)
+                for (int i = 0; i < drawDotLists.get(k).size() - 1; i++) {
+                    if (drawDotLists.get(k).get(i).visible < 0)
                         break;
 
-                    canvas.drawLine((float) (x1 + s * step),
-                            (float) functions.get(k).value(x1 + s * step),
-                            (float) (x1 + (s + 1) * step),
-                            (float) functions.get(k).value(x1 + (s + 1) * step),
-                            linePaint);
+                    double x1 = drawDotLists.get(k).get(i).x;
+                    double x2 = drawDotLists.get(k).get(i + 1).x;
+                    double step = (x2 - x1) / 10;
+                    for (int s = 0; s < 10; s++) {
+                        if (drawDotLists.get(k).get(i).visible < s)
+                            break;
+
+                        canvas.drawLine((float) (x1 + s * step),
+                                (float) functions.get(k).value(x1 + s * step),
+                                (float) (x1 + (s + 1) * step),
+                                (float) functions.get(k).value(x1 + (s + 1) * step),
+                                linePaint);
+                    }
                 }
             }
         }
@@ -605,7 +618,7 @@ public class LineView extends View {
         int targetX;
         int targetY;
         int linenumber;
-        int velocity = MyUtils.dip2px(getContext(), Integer.MAX_VALUE);
+        int velocity = MyUtils.dip2px(getContext(), 18);
         int visible = -1;
 
         Dot(int x, int y, int targetX, int targetY, Integer data, int linenumber) {
@@ -626,6 +639,10 @@ public class LineView extends View {
             this.data = data;
             this.linenumber = linenumber;
             this.visible = -1;
+            if (horizontalAnimation) {
+                this.x = targetX;
+                this.y = targetY;
+            }
             return this;
         }
 
