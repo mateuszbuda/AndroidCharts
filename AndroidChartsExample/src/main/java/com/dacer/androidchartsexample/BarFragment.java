@@ -17,6 +17,8 @@ import java.util.Arrays;
  * Created by Dacer on 11/15/13.
  */
 public class BarFragment extends Fragment {
+    int SIZE = 7;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_bar, container, false);
@@ -25,11 +27,33 @@ public class BarFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                randomSet(barView);
+                //randomSet(barView);
+                weekDaysRandomSet(barView);
             }
         });
-        randomSet(barView);
+        //randomSet(barView);
+        weekDaysRandomSet(barView);
         return rootView;
+    }
+
+    private void weekDaysRandomSet(BarView barView)
+    {
+        ArrayList<String> labels = new ArrayList<String>(SIZE);
+        labels.add("Mo");
+        labels.add("Tu");
+        labels.add("We");
+        labels.add("Th");
+        labels.add("Fr");
+        labels.add("Sa");
+        labels.add("Su");
+
+        barView.setBottomTextList(labels);
+
+        ArrayList<Integer> data = new ArrayList<Integer>(SIZE);
+        for (int i = 0; i < SIZE; i++)
+            data.add((int)(Math.random() * 100));
+
+        barView.setDataList(data, 100);
     }
 
     private void randomSet(BarView barView){

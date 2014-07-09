@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Dacer on 11/11/13.
+ * Edited by mateuszbuda on 10 July 2014
  */
 public class BarView extends View {
     private ArrayList<Float> percentList;
@@ -69,12 +70,12 @@ public class BarView extends View {
         fgPaint = new Paint(bgPaint);
         fgPaint.setColor(FOREGROUND_COLOR);
         rect = new Rect();
-        topMargin = MyUtils.dip2px(context, 5);
+        topMargin = MyUtils.dip2px(context, 8);
         int textSize = MyUtils.sp2px(context, 15);
         barWidth = MyUtils.dip2px(context,22);
         MINI_BAR_WIDTH = MyUtils.dip2px(context,22);
         BAR_SIDE_MARGIN  = MyUtils.dip2px(context,22);
-        TEXT_TOP_MARGIN = MyUtils.dip2px(context, 5);
+        TEXT_TOP_MARGIN = MyUtils.dip2px(context, 12);
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
         textPaint.setColor(TEXT_COLOR);
@@ -95,8 +96,8 @@ public class BarView extends View {
         barWidth = MINI_BAR_WIDTH;
         for(String s:bottomTextList){
             textPaint.getTextBounds(s,0,s.length(),r);
-            if(bottomTextHeight<r.height()){
-                bottomTextHeight = r.height();
+            if(bottomTextHeight < r.height() * 4 / 3){
+                bottomTextHeight = r.height() * 4 / 3;
             }
             if(autoSetWidth&&(barWidth<r.width())){
                 barWidth = r.width();
@@ -146,12 +147,12 @@ public class BarView extends View {
                 rect.set(BAR_SIDE_MARGIN*i+barWidth*(i-1),
                         topMargin,
                         (BAR_SIDE_MARGIN+barWidth)* i,
-                        getHeight()-bottomTextHeight-TEXT_TOP_MARGIN);
+                        topMargin + getHeight()-bottomTextHeight-TEXT_TOP_MARGIN);
                 canvas.drawRect(rect,bgPaint);
                 rect.set(BAR_SIDE_MARGIN*i+barWidth*(i-1),
-                        topMargin+(int)((getHeight()-topMargin)*percentList.get(i-1)),
+                        topMargin-1+(int)((getHeight()-bottomTextHeight-TEXT_TOP_MARGIN)*percentList.get(i-1)),
                         (BAR_SIDE_MARGIN+barWidth)* i,
-                        getHeight()-bottomTextHeight-TEXT_TOP_MARGIN);
+                        topMargin + getHeight()-bottomTextHeight-TEXT_TOP_MARGIN);
                 canvas.drawRect(rect,fgPaint);
                 i++;
             }
