@@ -456,15 +456,15 @@ public class LineView extends View {
                             linePaint);
                 }
             } else {
-                double[] x = new double[drawDotLists.get(k).size()];
-                double[] y = new double[drawDotLists.get(k).size()];
-
-                for (int i = 0; i < drawDotLists.get(k).size(); i++) {
-                    x[i] = drawDotLists.get(k).get(i).x;
-                    y[i] = drawDotLists.get(k).get(i).y;
-                }
-
                 if (functions.size() < k + 1) {
+                    double[] x = new double[drawDotLists.get(k).size()];
+                    double[] y = new double[drawDotLists.get(k).size()];
+
+                    for (int i = 0; i < drawDotLists.get(k).size(); i++) {
+                        x[i] = drawDotLists.get(k).get(i).x;
+                        y[i] = drawDotLists.get(k).get(i).y;
+                    }
+
                     UnivariateInterpolator interpolator = new SplineInterpolator();
                     functions.add(interpolator.interpolate(x, y));
                 }
