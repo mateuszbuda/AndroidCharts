@@ -71,7 +71,7 @@ pieView.setDate(pieHelperArrayList);
 
 #### Interpolated Line Chart
 
-![Line Chart](https://raw.github.com/dacer/AndroidCharts/master/pic/line_interpolated.png)
+![Line Chart](https://raw.github.com/mateuszbuda/AndroidCharts/master/pic/line_interpolated.png)
 
 ```xml
 <HorizontalScrollView>
