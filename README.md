@@ -69,6 +69,31 @@ ArrayList<PieHelper> pieHelperArrayList = new ArrayList<PieHelper>();
 pieView.setDate(pieHelperArrayList);
 ```
 
+#### Interpolated Line Chart
+
+![Line Chart](https://raw.github.com/dacer/AndroidCharts/master/pic/line_interpolated.png)
+
+```xml
+<HorizontalScrollView>
+        <view
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            class="com.dacer.androidcharts.LineView"
+            android:id="@+id/line_view" />
+</HorizontalScrollView>
+```
+
+```java
+LineView lineView = (LineView)findViewById(R.id.line_view);
+lineView.setDrawDotLine(false); //optional
+lineView.setShowPopup(LineView.SHOW_POPUPS_MAXMIN_ONLY); //optional
+lineView.setBottomTextList(strList);
+lineView.setDataList(dataLists);
+
+lineView.enableInterpolation();
+lineView.enableHorizontalAnimation(); //optional
+```
+
 ## License
 
 * MIT License
