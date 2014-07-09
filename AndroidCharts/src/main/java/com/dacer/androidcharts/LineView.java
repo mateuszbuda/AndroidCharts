@@ -113,7 +113,7 @@ public class LineView extends View {
                 }
             }
             if (needNewFrame) {
-                postDelayed(this, 0);
+                postDelayed(this, 18);
             }
             invalidate();
         }
