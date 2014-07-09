@@ -138,11 +138,24 @@ public class LineView extends View {
             }
 
             if (i < drawDotLists.get(0).size())
-                postDelayed(this, 28);
+                postDelayed(this, 21);
 
             invalidate();
         }
     };
+
+    private boolean horizontalAnimation = false;
+    public void setHorizontalAnimation(boolean horizontalAnimation)
+    {
+        this.horizontalAnimation = horizontalAnimation;
+    }
+    private boolean interpolation = false;
+    public void setInterpolation(boolean interpolation)
+    {
+        this.interpolation = interpolation;
+    }
+
+    private ArrayList<UnivariateFunction> functions = new ArrayList<UnivariateFunction>();
 
     public LineView(Context context) {
         this(context, null);
@@ -311,6 +324,8 @@ public class LineView extends View {
                 }
             }
         }
+
+        functions.clear();
         removeCallbacks(animator);
         post(animator);
         removeCallbacks(drawer);
@@ -437,8 +452,10 @@ public class LineView extends View {
                 y[i] = drawDotLists.get(k).get(i).y;
             }
 
-            UnivariateInterpolator interpolator = new SplineInterpolator();
-            UnivariateFunction function = interpolator.interpolate(x, y);
+            if (functions.size() < k + 1 ){
+                UnivariateInterpolator interpolator = new SplineInterpolator();
+                functions.add(interpolator.interpolate(x, y));
+            }
 
             for (int i = 0; i < drawDotLists.get(k).size() - 1; i++) {
                 if (drawDotLists.get(k).get(i).visible < 0)
@@ -452,9 +469,9 @@ public class LineView extends View {
                         break;
 
                     canvas.drawLine((float) (x1 + s * step),
-                            (float) function.value(x1 + s * step),
+                            (float) functions.get(k).value(x1 + s * step),
                             (float) (x1 + (s + 1) * step),
-                            (float) function.value(x1 + (s + 1) * step),
+                            (float) functions.get(k).value(x1 + (s + 1) * step),
                             linePaint);
                 }
             }
