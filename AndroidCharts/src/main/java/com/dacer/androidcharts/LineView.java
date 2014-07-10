@@ -27,6 +27,7 @@ import java.util.Collections;
  * Created by Dacer on 11/4/13.
  * Edited by Lee youngchan 21/1/14
  * Edited by dector 30-Jun-2014
+ * Edited by mateuszbuda 10 June 2014
  */
 public class LineView extends View {
     private int mViewHeight;
@@ -42,6 +43,7 @@ public class LineView extends View {
 
     private ArrayList<Integer> xCoordinateList = new ArrayList<Integer>();
     private ArrayList<Integer> yCoordinateList = new ArrayList<Integer>();
+    private ArrayList<Integer> reversedYCoordinateList;
 
     private ArrayList<ArrayList<Dot>> drawDotLists = new ArrayList<ArrayList<Dot>>();
     private ArrayList<Dot> drawDotList = new ArrayList<Dot>();
@@ -56,6 +58,15 @@ public class LineView extends View {
 
     private Dot pointToSelect;
     private Dot selectedDot;
+    private int horizontalLinesCount = 5;
+
+    public void setHorizontalLinesCount(int count) {
+        horizontalLinesCount = count - 1;
+    }
+
+    public void resetHorizontalLinesCount() {
+        horizontalLinesCount = 5;
+    }
 
     private int topLineLength = MyUtils.dip2px(getContext(), 12);       // |  | ←this
     //-+--+-
@@ -237,11 +248,7 @@ public class LineView extends View {
         int biggestData = 0;
         for (ArrayList<Integer> list : dataLists) {
             if (autoSetDataOfGird) {
-                for (Integer i : list) {
-                    if (biggestData < i) {
-                        biggestData = i;
-                    }
-                }
+                biggestData = Collections.max(list);
             }
             dataOfAGird = 1;
             while (biggestData / 10 > dataOfAGird) {
@@ -300,6 +307,8 @@ public class LineView extends View {
                     ((mViewHeight - topLineLength - bottomTextHeight - bottomTextTopMargin -
                             bottomLineLength - bottomTextDescent) * i / (verticalGridNum)));
         }
+        reversedYCoordinateList = (ArrayList) yCoordinateList.clone();
+        Collections.reverse(reversedYCoordinateList);
     }
 
     private void refreshDrawDotList(int verticalGridNum) {
@@ -509,28 +518,24 @@ public class LineView extends View {
                     paint);
         }
 
-        //draw dotted lines
-        paint.setPathEffect(effects);
-        Path dottedPath = new Path();
-        for (int i = 0; i < yCoordinateList.size(); i++) {
-            if ((yCoordinateList.size() - 1 - i) % dataOfAGird == 0) {
-                dottedPath.moveTo(0, yCoordinateList.get(i));
-                dottedPath.lineTo(getWidth(), yCoordinateList.get(i));
-                canvas.drawPath(dottedPath, paint);
-            }
-        }
-        //draw bottom text
-        if (bottomTextList != null) {
-            for (int i = 0; i < bottomTextList.size(); i++) {
-                canvas.drawText(bottomTextList.get(i), sideLineLength + backgroundGridWidth * i, mViewHeight - bottomTextDescent, bottomTextPaint);
-            }
-        }
+        int n = yCoordinateList.size();
 
-        if (!drawDotLine) {
+        if (drawDotLine) {
+            //draw dotted lines
+            paint.setPathEffect(effects);
+            Path dottedPath = new Path();
+            for (int i = 0; i < n; i++) {
+                if ((n < 8) || (i % (n / horizontalLinesCount) == 0) || (i == n - 1)) {
+                    dottedPath.moveTo(0, reversedYCoordinateList.get(i));
+                    dottedPath.lineTo(getWidth(), reversedYCoordinateList.get(i));
+                    canvas.drawPath(dottedPath, paint);
+                }
+            }
+        } else {
             //draw solid lines
-            for (int i = 0; i < yCoordinateList.size(); i++) {
-                if ((yCoordinateList.size() - 1 - i) % dataOfAGird == 0) {
-                    canvas.drawLine(0, yCoordinateList.get(i), getWidth(), yCoordinateList.get(i), paint);
+            for (int i = 0; i < n; i++) {
+                if ((n < 8) || (i % (n / horizontalLinesCount) == 0) || (i == n - 1)) {
+                    canvas.drawLine(0, reversedYCoordinateList.get(i), getWidth(), reversedYCoordinateList.get(i), paint);
                 }
             }
         }
