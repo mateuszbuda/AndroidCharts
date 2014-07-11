@@ -602,11 +602,9 @@ public class LineView extends View {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             pointToSelect = findPointAt((int) event.getX(), (int) event.getY());
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (pointToSelect != null) {
-                selectedDot = pointToSelect;
-                pointToSelect = null;
-                postInvalidate();
-            }
+            selectedDot = pointToSelect;
+            pointToSelect = null;
+            postInvalidate();
         }
 
         return true;
