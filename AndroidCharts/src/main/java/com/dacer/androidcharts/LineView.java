@@ -136,11 +136,13 @@ public class LineView extends View {
         @Override
         public void run() {
             int i = 0;
+            int x = 0;
             for (ArrayList<Dot> dots : drawDotLists) {
                 i = 0;
                 for (Dot dot : dots) {
                     if (dot.visible < 10) {
                         ++dot.visible;
+                        x = dot.x;
                         break;
                     }
                     ++i;
@@ -151,6 +153,8 @@ public class LineView extends View {
                 postDelayed(this, 15);
 
             invalidate();
+            invalidate(x - 1, topLineLength, x + (xCoordinateList.get(1) - xCoordinateList.get(0)) + 1,
+                    getHeight() - bottomTextHeight - bottomTextTopMargin);
         }
     };
 
