@@ -47,6 +47,8 @@ public class LineView extends View {
 
     private ArrayList<ArrayList<Dot>> drawDotLists = new ArrayList<ArrayList<Dot>>();
     private ArrayList<Dot> drawDotList = new ArrayList<Dot>();
+    int min = Integer.MAX_VALUE;
+    int max = Integer.MIN_VALUE;
 
     private Paint bottomTextPaint = new Paint();
     private int bottomTextDescent;
@@ -146,7 +148,7 @@ public class LineView extends View {
             }
 
             if (i < drawDotLists.get(0).size())
-                postDelayed(this, 21);
+                postDelayed(this, 15);
 
             invalidate();
         }
@@ -245,16 +247,16 @@ public class LineView extends View {
                         " dataList.size() > bottomTextList.size() !!!");
             }
         }
-        int biggestData = 0;
-        for (ArrayList<Integer> list : dataLists) {
-            if (autoSetDataOfGird) {
-                biggestData = Collections.max(list);
-            }
-            dataOfAGird = 1;
-            while (biggestData / 10 > dataOfAGird) {
-                dataOfAGird *= 10;
-            }
-        }
+//        int biggestData = 0;
+//        for (ArrayList<Integer> list : dataLists) {
+//            if (autoSetDataOfGird) {
+//                biggestData = Collections.max(list);
+//            }
+//            dataOfAGird = 1;
+//            while (biggestData / 10 > dataOfAGird) {
+//                dataOfAGird *= 10;
+//            }
+//        }
 
         refreshAfterDataChanged();
         showPopup = true;
@@ -272,16 +274,22 @@ public class LineView extends View {
 
     private int getVerticalGridlNum() {
         int verticalGridNum = MIN_VERTICAL_GRID_NUM;
-        if (dataLists != null && !dataLists.isEmpty()) {
-            for (ArrayList<Integer> list : dataLists) {
-                for (Integer integer : list) {
-                    if (verticalGridNum < (integer + 1)) {
-                        verticalGridNum = integer + 1;
-                    }
-                }
-            }
+//        if (dataLists != null && !dataLists.isEmpty()) {
+//            for (ArrayList<Integer> list : dataLists) {
+//                for (Integer integer : list) {
+//                    if (verticalGridNum < (integer + 1)) {
+//                        verticalGridNum = integer + 1;
+//                    }
+//                }
+//            }
+//        }
+        int tmp;
+        for (ArrayList<Integer> list : dataLists) {
+            min = (min > (tmp = Collections.min(list))) ? tmp : min;
+            max = (max < (tmp = Collections.max(list))) ? tmp : max;
         }
-        return verticalGridNum;
+
+        return (tmp = max - min) < MIN_VERTICAL_GRID_NUM ? MIN_VERTICAL_GRID_NUM : tmp;
     }
 
     private int getHorizontalGridNum() {
@@ -319,11 +327,11 @@ public class LineView extends View {
                 }
             }
             for (int k = 0; k < dataLists.size(); k++) {
-                int drawDotSize = drawDotLists.get(k).isEmpty() ? 0 : drawDotLists.get(k).size();
+                int drawDotSize = drawDotLists.get(k).size();
 
                 for (int i = 0; i < dataLists.get(k).size(); i++) {
                     int x = xCoordinateList.get(i);
-                    int y = yCoordinateList.get(verticalGridNum - dataLists.get(k).get(i));
+                    int y = yCoordinateList.get(verticalGridNum - dataLists.get(k).get(i) + min);
                     if (i > drawDotSize - 1) {
                         //도트리스트를 추가한다.
                         drawDotLists.get(k).add(new Dot(x, 0, x, y, dataLists.get(k).get(i), k));
@@ -512,20 +520,21 @@ public class LineView extends View {
         //draw vertical lines
         for (int i = 0; i < xCoordinateList.size(); i++) {
             canvas.drawLine(xCoordinateList.get(i),
-                    0,
+                    getPopupHeight() / 2,
                     xCoordinateList.get(i),
-                    mViewHeight - bottomTextTopMargin - bottomTextHeight - bottomTextDescent,
+                    mViewHeight - 2 * bottomTextTopMargin - bottomTextHeight - bottomTextDescent,
                     paint);
         }
 
         int n = yCoordinateList.size();
+        int m = n / horizontalLinesCount;
 
         if (drawDotLine) {
             //draw dotted lines
             paint.setPathEffect(effects);
             Path dottedPath = new Path();
             for (int i = 0; i < n; i++) {
-                if ((n < 8) || (i % (n / horizontalLinesCount) == 0) || (i == n - 1)) {
+                if ((n < 8) || (i % m == 0)) {
                     dottedPath.moveTo(0, reversedYCoordinateList.get(i));
                     dottedPath.lineTo(getWidth(), reversedYCoordinateList.get(i));
                     canvas.drawPath(dottedPath, paint);
@@ -534,9 +543,16 @@ public class LineView extends View {
         } else {
             //draw solid lines
             for (int i = 0; i < n; i++) {
-                if ((n < 8) || (i % (n / horizontalLinesCount) == 0) || (i == n - 1)) {
+                if ((n < horizontalLinesCount) || (i % m == 0)) {
                     canvas.drawLine(0, reversedYCoordinateList.get(i), getWidth(), reversedYCoordinateList.get(i), paint);
                 }
+            }
+        }
+
+        //draw bottom text
+        if (bottomTextList != null) {
+            for (int i = 0; i < bottomTextList.size(); i++) {
+                canvas.drawText(bottomTextList.get(i), sideLineLength + backgroundGridWidth * i, mViewHeight - bottomTextDescent, bottomTextPaint);
             }
         }
     }
