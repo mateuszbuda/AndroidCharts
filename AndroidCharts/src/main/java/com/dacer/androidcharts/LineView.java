@@ -615,6 +615,7 @@ public class LineView extends View {
             return null;
         }
 
+        ArrayList<Dot> candidates = new ArrayList<Dot>(dataLists.size());
         final int width = backgroundGridWidth / 2;
         final Region r = new Region();
 
@@ -625,12 +626,27 @@ public class LineView extends View {
 
                 r.set(pointX - width, pointY - width, pointX + width, pointY + width);
                 if (r.contains(x, y)) {
-                    return dot;
+                    //return dot;
+                    candidates.add(dot);
                 }
             }
         }
 
-        return null;
+        Dot nearest = null;
+        double minDist = Double.MAX_VALUE, tmp;
+        Point p = new Point(x, y);
+        for (Dot dot : candidates)
+            if (minDist > (tmp = distance(p, new Point(dot.x, dot.y)))) {
+                minDist = tmp;
+                nearest = dot;
+            }
+
+        return nearest;
+    }
+
+    private double distance(Point p, Point q)
+    {
+        return (p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y);
     }
 
 
