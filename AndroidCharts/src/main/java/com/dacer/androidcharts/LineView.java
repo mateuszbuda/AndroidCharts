@@ -31,10 +31,7 @@ import java.util.Collections;
  */
 public class LineView extends View {
     private int mViewHeight;
-    //drawBackground
-    private boolean autoSetDataOfGird = true;
     private boolean autoSetGridWidth = true;
-    private int dataOfAGird = 10;
     private int bottomTextHeight = 0;
     private ArrayList<String> bottomTextList = new ArrayList<String>();
 
@@ -46,7 +43,6 @@ public class LineView extends View {
     private ArrayList<Integer> reversedYCoordinateList;
 
     private ArrayList<ArrayList<Dot>> drawDotLists = new ArrayList<ArrayList<Dot>>();
-    private ArrayList<Dot> drawDotList = new ArrayList<Dot>();
     int min = Integer.MAX_VALUE;
     int max = Integer.MIN_VALUE;
 
@@ -55,7 +51,7 @@ public class LineView extends View {
 
     //popup
     private Paint popupTextPaint = new Paint();
-    private final int bottomTriangleHeight = 12;
+    private final int bottomTriangleHeight = 15;
     public boolean showPopup = true;
 
     private Dot pointToSelect;
@@ -152,9 +148,8 @@ public class LineView extends View {
             if (i < drawDotLists.get(0).size())
                 postDelayed(this, 15);
 
-            invalidate();
-            invalidate(x - 1, topLineLength, x + (xCoordinateList.get(1) - xCoordinateList.get(0)) + 1,
-                    getHeight() - bottomTextHeight - bottomTextTopMargin);
+            invalidate(x - DOT_OUTER_CIR_RADIUS, 0, x + (xCoordinateList.get(1) - xCoordinateList.get(0)) + DOT_OUTER_CIR_RADIUS,
+                    getHeight() - bottomTextHeight);
         }
     };
 
@@ -251,17 +246,6 @@ public class LineView extends View {
                         " dataList.size() > bottomTextList.size() !!!");
             }
         }
-//        int biggestData = 0;
-//        for (ArrayList<Integer> list : dataLists) {
-//            if (autoSetDataOfGird) {
-//                biggestData = Collections.max(list);
-//            }
-//            dataOfAGird = 1;
-//            while (biggestData / 10 > dataOfAGird) {
-//                dataOfAGird *= 10;
-//            }
-//        }
-
         refreshAfterDataChanged();
         showPopup = true;
         setMinimumWidth(0); // It can help the LineView reset the Width,
@@ -277,16 +261,6 @@ public class LineView extends View {
     }
 
     private int getVerticalGridlNum() {
-        int verticalGridNum = MIN_VERTICAL_GRID_NUM;
-//        if (dataLists != null && !dataLists.isEmpty()) {
-//            for (ArrayList<Integer> list : dataLists) {
-//                for (Integer integer : list) {
-//                    if (verticalGridNum < (integer + 1)) {
-//                        verticalGridNum = integer + 1;
-//                    }
-//                }
-//            }
-//        }
         int tmp;
         for (ArrayList<Integer> list : dataLists) {
             min = (min > (tmp = Collections.min(list))) ? tmp : min;
