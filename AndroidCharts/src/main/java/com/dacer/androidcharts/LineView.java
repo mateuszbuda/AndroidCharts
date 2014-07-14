@@ -35,8 +35,7 @@ public class LineView extends View {
     private int bottomTextHeight = 0;
     private ArrayList<String> bottomTextList = new ArrayList<String>();
 
-    private ArrayList<ArrayList<Integer>> dataLists;
-    private ArrayList<Integer> dataList;
+    private ArrayList<ArrayList<Float>> dataLists;
 
     private ArrayList<Integer> xCoordinateList = new ArrayList<Integer>();
     private ArrayList<Integer> yCoordinateList = new ArrayList<Integer>();
@@ -200,7 +199,6 @@ public class LineView extends View {
      * @param bottomTextList The String ArrayList in the bottom.
      */
     public void setBottomTextList(ArrayList<String> bottomTextList) {
-        this.dataList = null;
         this.bottomTextList = bottomTextList;
 
         Rect r = new Rect();
@@ -237,10 +235,10 @@ public class LineView extends View {
      * @param dataLists The Integer ArrayLists for showing,
      *                  dataList.size() must < bottomTextList.size()
      */
-    public void setDataList(ArrayList<ArrayList<Integer>> dataLists) {
+    public void setDataList(ArrayList<ArrayList<Float>> dataLists) {
         selectedDot = null;
         this.dataLists = dataLists;
-        for (ArrayList<Integer> list : dataLists) {
+        for (ArrayList<Float> list : dataLists) {
             if (list.size() > bottomTextList.size()) {
                 throw new RuntimeException("dacer.LineView error:" +
                         " dataList.size() > bottomTextList.size() !!!");
@@ -262,9 +260,11 @@ public class LineView extends View {
 
     private int getVerticalGridlNum() {
         int tmp;
-        for (ArrayList<Integer> list : dataLists) {
-            min = (min > (tmp = Collections.min(list))) ? tmp : min;
-            max = (max < (tmp = Collections.max(list))) ? tmp : max;
+        min = Integer.MAX_VALUE;
+        max = Integer.MIN_VALUE;
+        for (ArrayList<Float> list : dataLists) {
+            min = min > (tmp = (int) Math.floor(Collections.min(list))) ? tmp : min;
+            max = max < (tmp = (int) Math.ceil(Collections.max(list))) ? tmp : max;
         }
 
         return (tmp = max - min) < MIN_VERTICAL_GRID_NUM ? MIN_VERTICAL_GRID_NUM : tmp;
@@ -309,7 +309,8 @@ public class LineView extends View {
 
                 for (int i = 0; i < dataLists.get(k).size(); i++) {
                     int x = xCoordinateList.get(i);
-                    int y = yCoordinateList.get(verticalGridNum - dataLists.get(k).get(i) + min);
+                    int d = verticalGridNum - (int) (float) dataLists.get(k).get(i) + min;
+                    int y = yCoordinateList.get(d);
                     if (i > drawDotSize - 1) {
                         //도트리스트를 추가한다.
                         drawDotLists.get(k).add(new Dot(x, 0, x, y, dataLists.get(k).get(i), k));
@@ -356,8 +357,8 @@ public class LineView extends View {
 
 
         for (int k = 0; k < drawDotLists.size(); k++) {
-            int MaxValue = Collections.max(dataLists.get(k));
-            int MinValue = Collections.min(dataLists.get(k));
+            float MaxValue = Collections.max(dataLists.get(k));
+            float MinValue = Collections.min(dataLists.get(k));
             for (Dot d : drawDotLists.get(k)) {
                 if (showPopupType == SHOW_POPUPS_All)
                     drawPopup(canvas, String.valueOf(d.data), d.setupPoint(tmpPoint), popupColorArray[k % 3]);
@@ -618,8 +619,7 @@ public class LineView extends View {
         return nearest;
     }
 
-    private double distance(Point p, Point q)
-    {
+    private double distance(Point p, Point q) {
         return (p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y);
     }
 
@@ -627,14 +627,14 @@ public class LineView extends View {
     class Dot {
         int x;
         int y;
-        int data;
+        float data;
         int targetX;
         int targetY;
         int linenumber;
         int velocity = MyUtils.dip2px(getContext(), 18);
         int visible = -1;
 
-        Dot(int x, int y, int targetX, int targetY, Integer data, int linenumber) {
+        Dot(int x, int y, int targetX, int targetY, float data, int linenumber) {
             this.x = x;
             this.y = y;
             this.linenumber = linenumber;
@@ -646,7 +646,7 @@ public class LineView extends View {
             return point;
         }
 
-        Dot setTargetData(int targetX, int targetY, Integer data, int linenumber) {
+        Dot setTargetData(int targetX, int targetY, float data, int linenumber) {
             this.targetX = targetX;
             this.targetY = targetY;
             this.data = data;

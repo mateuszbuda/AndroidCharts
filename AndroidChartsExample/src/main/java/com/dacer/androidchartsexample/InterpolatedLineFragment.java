@@ -49,17 +49,17 @@ public class InterpolatedLineFragment extends Fragment {
     }
 
     private void randomSet(LineView lineView) {
-        ArrayList<Integer> dataList = new ArrayList<Integer>();
+        ArrayList<Float> dataList = new ArrayList<Float>();
         for (int i = 0; i < randomint; i++) {
-            dataList.add(100 + (int) (Math.random() * 100));
+            dataList.add(100 + (float) (Math.random() * 100));
         }
 
-        ArrayList<Integer> dataList2 = new ArrayList<Integer>();
+        ArrayList<Float> dataList2 = new ArrayList<Float>();
         for (int i = 0; i < randomint; i++) {
-            dataList2.add(100 + (int) (Math.random() * 100));
+            dataList2.add(100 + (float) (Math.random() * 100));
         }
 
-        ArrayList<ArrayList<Integer>> dataLists = new ArrayList<ArrayList<Integer>>();
+        ArrayList<ArrayList<Float>> dataLists = new ArrayList<ArrayList<Float>>();
         dataLists.add(dataList);
         dataLists.add(dataList2);
 

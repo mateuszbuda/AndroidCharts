@@ -46,25 +46,25 @@ public class LineFragment extends Fragment {
     }
 
     private void randomSet(LineView lineView){
-        ArrayList<Integer> dataList = new ArrayList<Integer>();
+        ArrayList<Float> dataList = new ArrayList<Float>();
         int random = (int)(Math.random()*9+1);
         for (int i=0; i<randomint; i++){
-            dataList.add((int)(Math.random()*random));
+            dataList.add((float)(Math.random()*random));
         }
         
-        ArrayList<Integer> dataList2 = new ArrayList<Integer>();
+        ArrayList<Float> dataList2 = new ArrayList<Float>();
         random = (int)(Math.random()*9+1);
         for (int i=0; i<randomint; i++){
-			dataList2.add((int)(Math.random()*random));
+			dataList2.add((float)(Math.random()*random));
         }
 
-        ArrayList<Integer> dataList3 = new ArrayList<Integer>();
+        ArrayList<Float> dataList3 = new ArrayList<Float>();
         random = (int)(Math.random()*9+1);
         for (int i=0; i<randomint; i++){
-            dataList3.add((int)(Math.random()*random));
+            dataList3.add((float)(Math.random()*random));
         }
 
-        ArrayList<ArrayList<Integer>> dataLists = new ArrayList<ArrayList<Integer>>();
+        ArrayList<ArrayList<Float>> dataLists = new ArrayList<ArrayList<Float>>();
         dataLists.add(dataList);
         dataLists.add(dataList2);
 //        dataLists.add(dataList3);
