@@ -179,12 +179,13 @@ public class BarView extends View {
         Rect textRect = new Rect();
         int padding = MyUtils.dip2px(getContext(), 4);
 
+        for (int i = 0 ; i < percentList.size(); i++)
+            if (percentList.get(i) != targetPercentList.get(i))
+                return;
+
         for (int i = 0; i < values.size(); i++) {
             if (displayAllValues || i == selectedBar) {
                 String vStr = Float.toString(values.get(i));
-
-                if (percentList.get(i) != targetPercentList.get(i))
-                    break;
 
                 textPaint.getTextBounds(vStr, 0, vStr.length(), textRect);
 

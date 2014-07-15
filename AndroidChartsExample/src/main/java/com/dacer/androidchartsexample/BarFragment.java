@@ -24,6 +24,7 @@ public class BarFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_bar, container, false);
         final BarView barView = (BarView) rootView.findViewById(R.id.bar_view);
         barView.setFgColor("#CAE8A2");
+        barView.displayAllValues();
         Button button = (Button) rootView.findViewById(R.id.bar_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override

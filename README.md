@@ -48,6 +48,7 @@ lineView.setDataList(dataLists);
 ```java
 BarView barView = (BarView)findViewById(R.id.bar_view);
 barView.setFgColor("#CAE8A2");
+barView.displayAllValues();
 barView.setBottomTextList(strList);
 barView.setDataList(dataList, 100);
 ```
