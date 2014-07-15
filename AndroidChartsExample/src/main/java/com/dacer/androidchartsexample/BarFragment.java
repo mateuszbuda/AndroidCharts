@@ -8,10 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.dacer.androidcharts.BarView;
-import com.dacer.androidcharts.LineView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by Dacer on 11/15/13.
@@ -22,8 +20,8 @@ public class BarFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_bar, container, false);
-        final BarView barView = (BarView)rootView.findViewById(R.id.bar_view);
-        Button button = (Button)rootView.findViewById(R.id.bar_button);
+        final BarView barView = (BarView) rootView.findViewById(R.id.bar_view);
+        Button button = (Button) rootView.findViewById(R.id.bar_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -36,8 +34,7 @@ public class BarFragment extends Fragment {
         return rootView;
     }
 
-    private void weekDaysRandomSet(BarView barView)
-    {
+    private void weekDaysRandomSet(BarView barView) {
         ArrayList<String> labels = new ArrayList<String>(SIZE);
         labels.add("Mo");
         labels.add("Tu");
@@ -49,27 +46,28 @@ public class BarFragment extends Fragment {
 
         barView.setBottomTextList(labels);
 
-        ArrayList<Integer> data = new ArrayList<Integer>(SIZE);
+        int max = 100;
+        ArrayList<Float> data = new ArrayList<Float>(SIZE);
         for (int i = 0; i < SIZE; i++)
-            data.add((int)(Math.random() * 100));
+            data.add((float) (Math.random() * max));
 
-        barView.setDataList(data, 100);
+        barView.setDataList(data, max);
     }
 
-    private void randomSet(BarView barView){
-        int random = (int)(Math.random()*20)+6;
+    private void randomSet(BarView barView) {
+        int random = (int) (Math.random() * 20) + 6;
         ArrayList<String> test = new ArrayList<String>();
-        for (int i=0; i<random; i++){
+        for (int i = 0; i < random; i++) {
             test.add("test");
             test.add("pqg");
 //            test.add(String.valueOf(i+1));
         }
         barView.setBottomTextList(test);
 
-        ArrayList<Integer> barDataList = new ArrayList<Integer>();
-        for(int i=0; i<random*2; i++){
-            barDataList.add((int)(Math.random() * 100));
+        ArrayList<Float> barDataList = new ArrayList<Float>();
+        for (int i = 0; i < random * 2; i++) {
+            barDataList.add((float) (Math.random() * 100));
         }
-        barView.setDataList(barDataList,100);
+        barView.setDataList(barDataList, 100);
     }
 }
