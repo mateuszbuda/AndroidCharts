@@ -78,7 +78,6 @@ public class LineView extends View {
     private final int bottomLineLength = MyUtils.sp2px(getContext(), 22);
     private final int DOT_INNER_CIR_RADIUS = MyUtils.dip2px(getContext(), 2);
     private final int DOT_OUTER_CIR_RADIUS = MyUtils.dip2px(getContext(), 5);
-    private final int MIN_TOP_LINE_LENGTH = MyUtils.dip2px(getContext(), 12);
     private final int MIN_VERTICAL_GRID_NUM = 4;
     private final int MIN_HORIZONTAL_GRID_NUM = 1;
     private final int BACKGROUND_LINE_COLOR = Color.parseColor("#EEEEEE");
@@ -94,11 +93,8 @@ public class LineView extends View {
         this.showPopupType = popupType;
     }
 
-    //점선표시
     private Boolean drawDotLine = false;
-    //라인컬러
     private String[] colorArray = {"#e74c3c", "#2980b9", "#1abc9c"};
-    //popup 컬러
     private int[] popupColorArray = {R.drawable.popup_red, R.drawable.popup_blue, R.drawable.popup_green};
 
     // onDraw optimisations
@@ -312,10 +308,8 @@ public class LineView extends View {
                     int d = verticalGridNum - Math.round(dataLists.get(k).get(i)) + min;
                     int y = yCoordinateList.get(d);
                     if (i > drawDotSize - 1) {
-                        //도트리스트를 추가한다.
                         drawDotLists.get(k).add(new Dot(x, 0, x, y, dataLists.get(k).get(i), k));
                     } else {
-                        //도트리스트에 타겟을 설정한다.
                         drawDotLists.get(k).set(i, drawDotLists.get(k).get(i).setTargetData(x, y, dataLists.get(k).get(i), k));
                     }
                 }
@@ -339,14 +333,6 @@ public class LineView extends View {
     }
 
     private void refreshTopLineLength(int verticalGridNum) {
-        // For prevent popup can't be completely showed when backgroundGridHeight is too small.
-        // But this code not so good.
-//        if ((mViewHeight - topLineLength - bottomTextHeight - bottomTextTopMargin) /
-//                (verticalGridNum + 2) < getPopupHeight()) {
-//            topLineLength = getPopupHeight() + DOT_OUTER_CIR_RADIUS + DOT_INNER_CIR_RADIUS + 2;
-//        } else {
-//            topLineLength = MIN_TOP_LINE_LENGTH;
-//        }
         topLineLength = getPopupHeight() + popupBottomMargin + DOT_OUTER_CIR_RADIUS;
     }
 
@@ -371,7 +357,6 @@ public class LineView extends View {
                 }
             }
         }
-// 선택한 dot 만 popup 이 뜨게 한다.        
         if (showPopup && selectedDot != null) {
             drawPopup(canvas,
                     String.valueOf(selectedDot.data),
@@ -417,7 +402,6 @@ public class LineView extends View {
         return r.height();
     }
 
-    //도트그리기
     private void drawDots(Canvas canvas) {
         Paint bigCirPaint = new Paint();
         bigCirPaint.setAntiAlias(true);
@@ -436,7 +420,6 @@ public class LineView extends View {
         }
     }
 
-    //선그리기
     private void drawLines(Canvas canvas) {
         Paint linePaint = new Paint();
         linePaint.setAntiAlias(true);
@@ -602,7 +585,6 @@ public class LineView extends View {
 
                 r.set(pointX - width, pointY - width, pointX + width, pointY + width);
                 if (r.contains(x, y)) {
-                    //return dot;
                     candidates.add(dot);
                 }
             }

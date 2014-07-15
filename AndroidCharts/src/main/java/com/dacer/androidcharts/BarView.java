@@ -22,7 +22,6 @@ public class BarView extends View {
     private Paint fgPaint;
     private Rect rect;
     private int barWidth;
-    //    private boolean showSideMargin = true;
     private int bottomTextDescent;
     private boolean autoSetWidth = true;
     private int topMargin;
@@ -90,7 +89,6 @@ public class BarView extends View {
      * @param bottomStringList The String ArrayList in the bottom.
      */
     public void setBottomTextList(ArrayList<String> bottomStringList) {
-//        this.dataList = null;
         this.bottomTextList = bottomStringList;
         Rect r = new Rect();
         bottomTextDescent = 0;
