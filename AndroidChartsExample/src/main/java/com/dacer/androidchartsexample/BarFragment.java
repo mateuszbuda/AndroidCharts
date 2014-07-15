@@ -9,10 +9,12 @@ import android.widget.Button;
 
 import com.dacer.androidcharts.BarView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
  * Created by Dacer on 11/15/13.
+ * Edited by mateuszbuda on 15 July 2014.
  */
 public class BarFragment extends Fragment {
     int SIZE = 7;
@@ -21,6 +23,7 @@ public class BarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_bar, container, false);
         final BarView barView = (BarView) rootView.findViewById(R.id.bar_view);
+        barView.setFgColor("#CAE8A2");
         Button button = (Button) rootView.findViewById(R.id.bar_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +52,7 @@ public class BarFragment extends Fragment {
         int max = 100;
         ArrayList<Float> data = new ArrayList<Float>(SIZE);
         for (int i = 0; i < SIZE; i++)
-            data.add((float) (Math.random() * max));
+            data.add(round((float) (Math.random() * max), 2));
 
         barView.setDataList(data, max);
     }
@@ -60,7 +63,6 @@ public class BarFragment extends Fragment {
         for (int i = 0; i < random; i++) {
             test.add("test");
             test.add("pqg");
-//            test.add(String.valueOf(i+1));
         }
         barView.setBottomTextList(test);
 
@@ -69,5 +71,11 @@ public class BarFragment extends Fragment {
             barDataList.add((float) (Math.random() * 100));
         }
         barView.setDataList(barDataList, 100);
+    }
+
+    private static float round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
     }
 }

@@ -5,7 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Region;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.ArrayList;
  * Edited by mateuszbuda on 10 July 2014
  */
 public class BarView extends View {
+    private ArrayList<Float> values;
+    private boolean displayValues = true;
     private ArrayList<Float> percentList;
     private ArrayList<Float> targetPercentList;
     private Paint textPaint;
@@ -30,9 +34,24 @@ public class BarView extends View {
     private final int MINI_BAR_WIDTH;
     private final int BAR_SIDE_MARGIN;
     private final int TEXT_TOP_MARGIN;
-    private final int TEXT_COLOR = Color.parseColor("#9B9A9B");
-    private final int BACKGROUND_COLOR = Color.parseColor("#F6F6F6");
-    private final int FOREGROUND_COLOR = Color.parseColor("#FC496D");
+    private int textColor = Color.parseColor("#9B9A9B");
+    private int bgColor = Color.parseColor("#F6F6F6");
+    private int fgColor = Color.parseColor("#FC496D");
+
+    public void setTextColor(String textColor) {
+        this.textColor = Color.parseColor(textColor);
+        textPaint.setColor(this.textColor);
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = Color.parseColor(bgColor);
+        bgPaint.setColor(this.bgColor);
+    }
+
+    public void setFgColor(String fgColor) {
+        this.fgColor = Color.parseColor(fgColor);
+        fgPaint.setColor(this.fgColor);
+    }
 
     private Runnable animator = new Runnable() {
         @Override
@@ -65,9 +84,9 @@ public class BarView extends View {
         super(context, attrs);
         bgPaint = new Paint();
         bgPaint.setAntiAlias(true);
-        bgPaint.setColor(BACKGROUND_COLOR);
+        bgPaint.setColor(bgColor);
         fgPaint = new Paint(bgPaint);
-        fgPaint.setColor(FOREGROUND_COLOR);
+        fgPaint.setColor(fgColor);
         rect = new Rect();
         topMargin = MyUtils.dip2px(context, 8);
         int textSize = MyUtils.sp2px(context, 15);
@@ -77,7 +96,7 @@ public class BarView extends View {
         TEXT_TOP_MARGIN = MyUtils.dip2px(context, 12);
         textPaint = new Paint();
         textPaint.setAntiAlias(true);
-        textPaint.setColor(TEXT_COLOR);
+        textPaint.setColor(textColor);
         textPaint.setTextSize(textSize);
         textPaint.setTextAlign(Paint.Align.CENTER);
         percentList = new ArrayList<Float>();
@@ -120,6 +139,9 @@ public class BarView extends View {
             targetPercentList.add(1 - value / max);
         }
 
+        selectedBar = -1;
+        values = list;
+
         // Make sure percentList.size() == targetPercentList.size()
         if (percentList.isEmpty() || percentList.size() < targetPercentList.size()) {
             int temp = targetPercentList.size() - percentList.size();
@@ -148,7 +170,7 @@ public class BarView extends View {
                         topMargin + getHeight() - bottomTextHeight - TEXT_TOP_MARGIN);
                 canvas.drawRect(rect, bgPaint);
                 rect.set(BAR_SIDE_MARGIN * i + barWidth * (i - 1),
-                        topMargin - 1 + (int) ((getHeight() - bottomTextHeight - TEXT_TOP_MARGIN) * percentList.get(i - 1)),
+                        (topMargin - 1) + (int) ((getHeight() - bottomTextHeight - TEXT_TOP_MARGIN) * percentList.get(i - 1)),
                         (BAR_SIDE_MARGIN + barWidth) * i,
                         topMargin + getHeight() - bottomTextHeight - TEXT_TOP_MARGIN);
                 canvas.drawRect(rect, fgPaint);
@@ -164,6 +186,38 @@ public class BarView extends View {
                 i++;
             }
         }
+
+        if (displayValues && selectedBar >= 0)
+            drawDataText(canvas);
+    }
+
+    private void drawDataText(Canvas canvas) {
+        Rect textRect = new Rect();
+        int padding = MyUtils.dip2px(getContext(), 4);
+        String vStr = Float.toString(values.get(selectedBar));
+
+        if (percentList.get(selectedBar) != targetPercentList.get(selectedBar))
+            return;
+
+        textPaint.getTextBounds(vStr, 0, vStr.length(), textRect);
+
+        float x = BAR_SIDE_MARGIN * (selectedBar + 1) + barWidth * selectedBar + barWidth / 2 + textRect.height() / 2;
+        float y;
+
+        if (textRect.width() + 2 * padding <
+                (getHeight() - bottomTextHeight - TEXT_TOP_MARGIN) * percentList.get(selectedBar)) {
+            // drawing above the bar
+            y = topMargin + (getHeight() - bottomTextHeight - TEXT_TOP_MARGIN) * percentList.get(selectedBar)
+                    - padding - textRect.width() / 2;
+        } else {
+            // drawing on the bar itself
+            y = topMargin + (getHeight() - bottomTextHeight - TEXT_TOP_MARGIN) * percentList.get(selectedBar)
+                    + padding + textRect.width() / 2;
+        }
+        canvas.save();
+        canvas.rotate(-90, x, y);
+        canvas.drawText(vStr, x, y, textPaint);
+        canvas.restore();
     }
 
     @Override
@@ -203,4 +257,25 @@ public class BarView extends View {
         return measurement;
     }
 
+    int selectedBar = -1;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        selectedBar = -1;
+        final Region r = new Region();
+
+        for (int i = 1; i <= percentList.size(); i++) {
+            r.set(BAR_SIDE_MARGIN * i + barWidth * (i - 1),
+                    topMargin,
+                    (BAR_SIDE_MARGIN + barWidth) * i,
+                    topMargin + getHeight() - bottomTextHeight - TEXT_TOP_MARGIN);
+            if (r.contains((int) event.getX(), (int) event.getY())) {
+                selectedBar = i - 1;
+                break;
+            }
+        }
+
+        invalidate();
+        return true;
+    }
 }
