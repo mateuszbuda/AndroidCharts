@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.dacer.androidcharts.LineView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -49,26 +50,32 @@ public class LineFragment extends Fragment {
         ArrayList<Float> dataList = new ArrayList<Float>();
         int random = (int)(Math.random()*9+1);
         for (int i=0; i<randomint; i++){
-            dataList.add((float)(Math.random()*random));
+            dataList.add(round((float)(Math.random()*random), 2));
         }
         
         ArrayList<Float> dataList2 = new ArrayList<Float>();
         random = (int)(Math.random()*9+1);
         for (int i=0; i<randomint; i++){
-			dataList2.add((float)(Math.random()*random));
+			dataList2.add(round((float)(Math.random()*random), 2));
         }
 
         ArrayList<Float> dataList3 = new ArrayList<Float>();
         random = (int)(Math.random()*9+1);
         for (int i=0; i<randomint; i++){
-            dataList3.add((float)(Math.random()*random));
+            dataList3.add(round((float)(Math.random()*random), 2));
         }
 
         ArrayList<ArrayList<Float>> dataLists = new ArrayList<ArrayList<Float>>();
         dataLists.add(dataList);
         dataLists.add(dataList2);
-//        dataLists.add(dataList3);
+        dataLists.add(dataList3);
         
         lineView.setDataList(dataLists);
+    }
+
+    private static float round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
     }
 }

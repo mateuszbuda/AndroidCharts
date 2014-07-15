@@ -55,14 +55,10 @@ public class LineView extends View {
 
     private Dot pointToSelect;
     private Dot selectedDot;
-    private int horizontalLinesCount = 5;
+    private int horizontalLinesCount = 6;
 
     public void setHorizontalLinesCount(int count) {
-        horizontalLinesCount = count - 1;
-    }
-
-    public void resetHorizontalLinesCount() {
-        horizontalLinesCount = 5;
+        horizontalLinesCount = count > 1 ? count : 2;
     }
 
     private int topLineLength = MyUtils.dip2px(getContext(), 12);       // |  | ←this
@@ -82,6 +78,7 @@ public class LineView extends View {
     private final int MIN_HORIZONTAL_GRID_NUM = 1;
     private final int BACKGROUND_LINE_COLOR = Color.parseColor("#EEEEEE");
     private final int BOTTOM_TEXT_COLOR = Color.parseColor("#9B9A9B");
+    private final static int ACCURACY = 10;
 
     public static final int SHOW_POPUPS_All = 1;
     public static final int SHOW_POPUPS_MAXMIN_ONLY = 2;
@@ -263,7 +260,8 @@ public class LineView extends View {
             max = max < (tmp = (int) Math.ceil(Collections.max(list))) ? tmp : max;
         }
 
-        return (tmp = max - min) < MIN_VERTICAL_GRID_NUM ? MIN_VERTICAL_GRID_NUM : tmp;
+        //return (tmp = max - min) < MIN_VERTICAL_GRID_NUM ? MIN_VERTICAL_GRID_NUM : tmp;
+        return (max - min) * ACCURACY;
     }
 
     private int getHorizontalGridNum() {
@@ -305,7 +303,7 @@ public class LineView extends View {
 
                 for (int i = 0; i < dataLists.get(k).size(); i++) {
                     int x = xCoordinateList.get(i);
-                    int d = verticalGridNum - Math.round(dataLists.get(k).get(i)) + min;
+                    int d = verticalGridNum - Math.round(dataLists.get(k).get(i) * ACCURACY) + min * ACCURACY;
                     int y = yCoordinateList.get(d);
                     if (i > drawDotSize - 1) {
                         drawDotLists.get(k).add(new Dot(x, 0, x, y, dataLists.get(k).get(i), k));
@@ -321,13 +319,13 @@ public class LineView extends View {
             }
         }
 
-        if (horizontalAnimation) {
-            removeCallbacks(drawer);
+        removeCallbacks(drawer);
+        removeCallbacks(animator);
+
+        if (horizontalAnimation)
             post(drawer);
-        } else {
-            removeCallbacks(animator);
+        else
             post(animator);
-        }
 
         functions.clear();
     }
@@ -497,7 +495,7 @@ public class LineView extends View {
             paint.setPathEffect(effects);
             Path dottedPath = new Path();
             for (int i = 0; i < n; i++) {
-                if ((n < 8) || (i % m == 0)) {
+                if ((n < horizontalLinesCount) || (i % m == 0)) {
                     dottedPath.moveTo(0, reversedYCoordinateList.get(i));
                     dottedPath.lineTo(getWidth(), reversedYCoordinateList.get(i));
                     canvas.drawPath(dottedPath, paint);

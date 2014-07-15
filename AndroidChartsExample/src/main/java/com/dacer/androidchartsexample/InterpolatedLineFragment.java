@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.dacer.androidcharts.LineView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -51,12 +52,12 @@ public class InterpolatedLineFragment extends Fragment {
     private void randomSet(LineView lineView) {
         ArrayList<Float> dataList = new ArrayList<Float>();
         for (int i = 0; i < randomint; i++) {
-            dataList.add(10 + (float) (Math.random() * 4));
+            dataList.add(round(10 + (float) (Math.random() * 4), 2));
         }
 
         ArrayList<Float> dataList2 = new ArrayList<Float>();
         for (int i = 0; i < randomint; i++) {
-            dataList2.add(10 + (float) (Math.random() * 4));
+            dataList2.add(round(10 + (float) (Math.random() * 4), 2));
         }
 
         ArrayList<ArrayList<Float>> dataLists = new ArrayList<ArrayList<Float>>();
@@ -64,5 +65,11 @@ public class InterpolatedLineFragment extends Fragment {
         dataLists.add(dataList2);
 
         lineView.setDataList(dataLists);
+    }
+
+    private static float round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
     }
 }
