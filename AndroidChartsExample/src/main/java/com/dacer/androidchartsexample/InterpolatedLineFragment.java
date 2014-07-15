@@ -34,7 +34,7 @@ public class InterpolatedLineFragment extends Fragment {
         // ! New functionalities:
         lineView.enableHorizontalAnimation();
         lineView.enableInterpolation();
-        lineView.setHorizontalLinesCount(6);
+        lineView.setHorizontalLinesCount(4);
 
         Button lineButton = (Button) rootView.findViewById(R.id.line_button);
         lineButton.setOnClickListener(new View.OnClickListener() {
@@ -51,12 +51,12 @@ public class InterpolatedLineFragment extends Fragment {
     private void randomSet(LineView lineView) {
         ArrayList<Float> dataList = new ArrayList<Float>();
         for (int i = 0; i < randomint; i++) {
-            dataList.add(100 + (float) (Math.random() * 100));
+            dataList.add(10 + (float) (Math.random() * 4));
         }
 
         ArrayList<Float> dataList2 = new ArrayList<Float>();
         for (int i = 0; i < randomint; i++) {
-            dataList2.add(100 + (float) (Math.random() * 100));
+            dataList2.add(10 + (float) (Math.random() * 4));
         }
 
         ArrayList<ArrayList<Float>> dataLists = new ArrayList<ArrayList<Float>>();

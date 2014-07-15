@@ -309,7 +309,7 @@ public class LineView extends View {
 
                 for (int i = 0; i < dataLists.get(k).size(); i++) {
                     int x = xCoordinateList.get(i);
-                    int d = verticalGridNum - (int) (float) dataLists.get(k).get(i) + min;
+                    int d = verticalGridNum - Math.round(dataLists.get(k).get(i)) + min;
                     int y = yCoordinateList.get(d);
                     if (i > drawDotSize - 1) {
                         //도트리스트를 추가한다.
