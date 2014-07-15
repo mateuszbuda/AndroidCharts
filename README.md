@@ -33,7 +33,7 @@ lineView.setDataList(dataLists);
 
 #### Bar Chart
 
-![Bar Chart](https://raw.github.com/dacer/AndroidCharts/master/pic/bar.png)
+![Bar Chart](https://raw.github.com/mateuszbuda/AndroidCharts/master/pic/bar.png)
 
 ```xml
 <HorizontalScrollView>

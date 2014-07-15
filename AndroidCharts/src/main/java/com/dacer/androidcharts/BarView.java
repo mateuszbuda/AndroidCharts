@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class BarView extends View {
     private ArrayList<Float> values;
-    private boolean displayValues = true;
+    private boolean displayAllValues = false;
     private ArrayList<Float> percentList;
     private ArrayList<Float> targetPercentList;
     private Paint textPaint;
@@ -37,21 +37,6 @@ public class BarView extends View {
     private int textColor = Color.parseColor("#9B9A9B");
     private int bgColor = Color.parseColor("#F6F6F6");
     private int fgColor = Color.parseColor("#FC496D");
-
-    public void setTextColor(String textColor) {
-        this.textColor = Color.parseColor(textColor);
-        textPaint.setColor(this.textColor);
-    }
-
-    public void setBgColor(String bgColor) {
-        this.bgColor = Color.parseColor(bgColor);
-        bgPaint.setColor(this.bgColor);
-    }
-
-    public void setFgColor(String fgColor) {
-        this.fgColor = Color.parseColor(fgColor);
-        fgPaint.setColor(this.fgColor);
-    }
 
     private Runnable animator = new Runnable() {
         @Override
@@ -187,37 +172,41 @@ public class BarView extends View {
             }
         }
 
-        if (displayValues && selectedBar >= 0)
-            drawDataText(canvas);
+        drawDataText(canvas);
     }
 
     private void drawDataText(Canvas canvas) {
         Rect textRect = new Rect();
         int padding = MyUtils.dip2px(getContext(), 4);
-        String vStr = Float.toString(values.get(selectedBar));
 
-        if (percentList.get(selectedBar) != targetPercentList.get(selectedBar))
-            return;
+        for (int i = 0; i < values.size(); i++) {
+            if (displayAllValues || i == selectedBar) {
+                String vStr = Float.toString(values.get(i));
 
-        textPaint.getTextBounds(vStr, 0, vStr.length(), textRect);
+                if (percentList.get(i) != targetPercentList.get(i))
+                    break;
 
-        float x = BAR_SIDE_MARGIN * (selectedBar + 1) + barWidth * selectedBar + barWidth / 2 + textRect.height() / 2;
-        float y;
+                textPaint.getTextBounds(vStr, 0, vStr.length(), textRect);
 
-        if (textRect.width() + 2 * padding <
-                (getHeight() - bottomTextHeight - TEXT_TOP_MARGIN) * percentList.get(selectedBar)) {
-            // drawing above the bar
-            y = topMargin + (getHeight() - bottomTextHeight - TEXT_TOP_MARGIN) * percentList.get(selectedBar)
-                    - padding - textRect.width() / 2;
-        } else {
-            // drawing on the bar itself
-            y = topMargin + (getHeight() - bottomTextHeight - TEXT_TOP_MARGIN) * percentList.get(selectedBar)
-                    + padding + textRect.width() / 2;
+                float x = BAR_SIDE_MARGIN * (i + 1) + barWidth * i + barWidth / 2 + textRect.height() / 2;
+                float y;
+
+                if (textRect.width() + 2 * padding <
+                        (getHeight() - bottomTextHeight - TEXT_TOP_MARGIN) * percentList.get(i)) {
+                    // drawing above the bar
+                    y = topMargin + (getHeight() - bottomTextHeight - TEXT_TOP_MARGIN) * percentList.get(i)
+                            - padding - textRect.width() / 2;
+                } else {
+                    // drawing on the bar itself
+                    y = topMargin + (getHeight() - bottomTextHeight - TEXT_TOP_MARGIN) * percentList.get(i)
+                            + padding + textRect.width() / 2;
+                }
+                canvas.save();
+                canvas.rotate(-90, x, y);
+                canvas.drawText(vStr, x, y, textPaint);
+                canvas.restore();
+            }
         }
-        canvas.save();
-        canvas.rotate(-90, x, y);
-        canvas.drawText(vStr, x, y, textPaint);
-        canvas.restore();
     }
 
     @Override
@@ -277,5 +266,31 @@ public class BarView extends View {
 
         invalidate();
         return true;
+    }
+
+
+    public void setTextColor(String textColor) {
+        this.textColor = Color.parseColor(textColor);
+        textPaint.setColor(this.textColor);
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = Color.parseColor(bgColor);
+        bgPaint.setColor(this.bgColor);
+    }
+
+    public void setFgColor(String fgColor) {
+        this.fgColor = Color.parseColor(fgColor);
+        fgPaint.setColor(this.fgColor);
+    }
+
+    public void displayAllValues()
+    {
+        displayAllValues = true;
+    }
+
+    public void displayOnlySelectedBarValue()
+    {
+        displayAllValues = false;
     }
 }
