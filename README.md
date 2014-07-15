@@ -46,9 +46,10 @@ lineView.setDataList(dataLists);
 ```
 
 ```java
-BarView barView = (BarView)findViewById(R.id.bar_view);\
+BarView barView = (BarView)findViewById(R.id.bar_view);
+barView.setFgColor("#CAE8A2");
 barView.setBottomTextList(strList);
-barView.setDataList(dataList,100);
+barView.setDataList(dataList, 100);
 ```
 
 #### Clock Pie Chart
@@ -86,7 +87,6 @@ pieView.setDate(pieHelperArrayList);
 ```java
 LineView lineView = (LineView)findViewById(R.id.line_view);
 lineView.setDrawDotLine(false); //optional
-lineView.setShowPopup(LineView.SHOW_POPUPS_MAXMIN_ONLY); //optional
 lineView.setBottomTextList(strList);
 lineView.setDataList(dataLists);
 
