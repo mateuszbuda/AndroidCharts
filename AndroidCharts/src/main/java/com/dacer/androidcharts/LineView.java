@@ -341,12 +341,13 @@ public class LineView extends View {
     private void refreshTopLineLength(int verticalGridNum) {
         // For prevent popup can't be completely showed when backgroundGridHeight is too small.
         // But this code not so good.
-        if ((mViewHeight - topLineLength - bottomTextHeight - bottomTextTopMargin) /
-                (verticalGridNum + 2) < getPopupHeight()) {
-            topLineLength = getPopupHeight() + DOT_OUTER_CIR_RADIUS + DOT_INNER_CIR_RADIUS + 2;
-        } else {
-            topLineLength = MIN_TOP_LINE_LENGTH;
-        }
+//        if ((mViewHeight - topLineLength - bottomTextHeight - bottomTextTopMargin) /
+//                (verticalGridNum + 2) < getPopupHeight()) {
+//            topLineLength = getPopupHeight() + DOT_OUTER_CIR_RADIUS + DOT_INNER_CIR_RADIUS + 2;
+//        } else {
+//            topLineLength = MIN_TOP_LINE_LENGTH;
+//        }
+        topLineLength = getPopupHeight() + popupBottomMargin + DOT_OUTER_CIR_RADIUS;
     }
 
     @Override
