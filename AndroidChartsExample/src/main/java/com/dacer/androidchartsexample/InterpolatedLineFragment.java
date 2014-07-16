@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * Created by mateusz on 09/07/2014.
  */
 public class InterpolatedLineFragment extends Fragment {
-    int randomint = 9;
+    int randomint = 36;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -26,7 +26,7 @@ public class InterpolatedLineFragment extends Fragment {
 
         ArrayList<String> test = new ArrayList<String>();
         for (int i = 0; i < randomint; i++) {
-            test.add(String.valueOf(i + 1));
+            test.add(String.valueOf(i));
         }
         lineView.setBottomTextList(test);
         lineView.setDrawDotLine(false);

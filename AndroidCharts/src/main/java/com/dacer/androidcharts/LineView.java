@@ -123,22 +123,23 @@ public class LineView extends View {
     private Runnable drawer = new Runnable() {
         @Override
         public void run() {
-            int i = 0;
             int x = 0;
             for (ArrayList<Dot> dots : drawDotLists) {
-                i = 0;
                 for (Dot dot : dots) {
-                    if (dot.visible < 10) {
-                        ++dot.visible;
+                    if (dot.visible < FUN_SPLIT) {
+                        dot.visible += (FUN_SPLIT / 5);
                         x = dot.x;
                         break;
                     }
-                    ++i;
                 }
             }
 
-            if (i < drawDotLists.get(0).size())
-                postDelayed(this, 15);
+            for (int k = 0; k < drawDotLists.size(); k++)
+                if (drawDotLists.get(k).get(drawDotLists.get(k).size() - 1).visible < 0)
+                {
+                    postDelayed(this, (int)((float)36 * (1 - (float) x / (float) getWidth())));
+                    break;
+                }
 
             invalidate(x - DOT_OUTER_CIR_RADIUS, 0, x + (xCoordinateList.get(1) - xCoordinateList.get(0)) + DOT_OUTER_CIR_RADIUS,
                     getHeight() - bottomTextHeight);
@@ -165,6 +166,7 @@ public class LineView extends View {
         interpolation = false;
     }
 
+    private final int FUN_SPLIT = 20;
     private ArrayList<UnivariateFunction> functions = new ArrayList<UnivariateFunction>();
 
     public LineView(Context context) {
@@ -259,8 +261,6 @@ public class LineView extends View {
             min = min > (tmp = (int) Math.floor(Collections.min(list))) ? tmp : min;
             max = max < (tmp = (int) Math.ceil(Collections.max(list))) ? tmp : max;
         }
-
-        //return (tmp = max - min) < MIN_VERTICAL_GRID_NUM ? MIN_VERTICAL_GRID_NUM : tmp;
         return (max - min) * ACCURACY;
     }
 
@@ -339,7 +339,6 @@ public class LineView extends View {
         drawBackgroundLines(canvas);
         drawLines(canvas);
         drawDots(canvas);
-
 
         for (int k = 0; k < drawDotLists.size(); k++) {
             float MaxValue = Collections.max(dataLists.get(k));
@@ -453,8 +452,8 @@ public class LineView extends View {
 
                     double x1 = drawDotLists.get(k).get(i).x;
                     double x2 = drawDotLists.get(k).get(i + 1).x;
-                    double step = (x2 - x1) / 10;
-                    for (int s = 0; s < 10; s++) {
+                    double step = (x2 - x1) / FUN_SPLIT;
+                    for (int s = 0; s < FUN_SPLIT; s++) {
                         if (drawDotLists.get(k).get(i).visible < s)
                             break;
 
